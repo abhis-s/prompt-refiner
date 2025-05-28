@@ -1,0 +1,725 @@
+/* Modern nav bar button for Load Cache */
+#loadCacheBtn.modern-button {
+  margin-left: 12px;
+  padding: 6px 14px;
+  height: 34px;
+  background-color: var(--primary-color, #ed8079);
+  border: none;
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 15px;
+  transition: background-color 0.3s;
+}
+
+#loadCacheBtn.modern-button:hover {
+  background-color: var(--primary-color-hover, #388e3c);
+}
+
+/* --- Prism.js theme override for both light and dark modes --- */
+/* Ensure Prism.js uses the correct theme-based colors */
+pre[class*="language-"] code {
+  color: inherit !important;
+  background: inherit !important;
+  text-shadow: none !important;
+}
+
+pre[class*="language-"] {
+  background: inherit !important;
+  color: inherit !important;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Optional: Remove background color from line number gutter */
+pre[class*="language-"].line-numbers {
+  background-color: inherit !important;
+}
+
+/* Make sure line numbers do not affect text color */
+pre[class*="language-"].line-numbers .line-numbers-rows {
+  border-right: 1px solid var(--border-color, #ccc);
+}
+
+pre[class*="language-"].line-numbers .line-numbers-rows > span {
+  color: var(--line-number-color, #999);
+  text-shadow: none !important;
+}
+/* --- Theme variable setup for containers (for Prism.js and general theming) --- */
+.markdown-container,
+#markdownContainer,
+body {
+  --text-color: #333;
+  --bg-color: #f0f2f5;
+  --border-color: #ccc;
+  --line-number-color: #999;
+}
+
+body.dark-mode,
+body.dark-mode .markdown-container,
+body.dark-mode #markdownContainer {
+  --text-color: #f0f0f0;
+  --bg-color: #121212;
+  --border-color: #555;
+  --line-number-color: #888;
+}
+button:disabled {
+    background-color: #ccc !important;
+    color: #666 !important;
+    cursor: not-allowed !important;
+}
+/* Inline layout for label and dropdowns */
+.label-inline-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.label-inline-group label {
+    margin: 0;
+    flex-shrink: 0;
+    width: 180px;
+}
+
+.label-inline-group select {
+    flex-grow: 1;
+}
+/* General Reset & Base Styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0 40px 40px;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* Headings */
+h1 {
+    color: #2c3e50;
+}
+
+/* Label Styling */
+label {
+    font-weight: 600;
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 6px;
+    color: #444;
+}
+
+/* Inputs and Textareas */
+textarea,
+input,
+select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 4px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+    background-color: #fff;
+    transition: border 0.3s ease;
+}
+
+textarea:focus,
+input:focus,
+select:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Button Styling */
+button {
+    padding: 12px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Container Layout */
+.container {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+/* Column Layout */
+.left-column {
+    flex: 1;
+}
+
+.right-column {
+    flex: 1;
+}
+
+/* Output Box */
+.output {
+    margin-top: 0;
+    background: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    min-height: 150px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    white-space: normal;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+body.dark-mode h1 {
+    color: #ffffff;
+}
+
+body.dark-mode label {
+    color: #cccccc;
+}
+
+body.dark-mode textarea,
+body.dark-mode input,
+body.dark-mode select {
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+    border: 1px solid #555;
+}
+
+body.dark-mode textarea:focus,
+body.dark-mode input:focus,
+body.dark-mode select:focus {
+    border-color: #81c784;
+}
+
+body.dark-mode button {
+    background-color: #388e3c;
+}
+
+body.dark-mode button:hover {
+    background-color: #2e7d32;
+}
+
+body.dark-mode .output {
+    background: #1e1e1e;
+    color: #f0f0f0;
+    border: 1px solid #555;
+    box-shadow: none;
+}
+
+/* Toggle Switch Styles, centered vertically */
+.toggle-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    height: 100%;
+}
+
+.toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 60px;
+    height: 30px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Light mode slider (off state) */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #333;
+    border-radius: 30px;
+    transition: 0.4s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    font-size: 14px;
+    /* vertically center in the nav */
+    height: 100%;
+}
+
+.slider:before {
+    content: "";
+    position: absolute;
+    height: 24px;
+    width: 24px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.4s;
+}
+
+/* Light mode slider (on state) */
+input:checked + .slider {
+    background-color: #4CAF50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(30px);
+}
+
+.icon-left,
+.icon-right {
+    z-index: 1;
+}
+
+/* Dark mode slider (off state) */
+body.dark-mode .slider {
+    background-color: #333;
+}
+
+/* Dark mode slider (on state) */
+body.dark-mode input:checked + .slider {
+    background-color: #81c784;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    position: sticky;
+    top: 0;
+    background-color: #f0f2f5;
+    z-index: 1000;
+    border-bottom: 1px solid #ccc;
+    height: 70px;
+}
+.header-container h1 {
+    margin: 0;
+    margin-right: 20px;
+    font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+body.dark-mode .header-container {
+    background-color: #121212;
+    border-bottom: 1px solid #333;
+}
+
+/* Copy button styling */
+.copy-button {
+    float: right;
+    margin-top: -26px;
+    margin-bottom: 10px;
+    background-color: #e0e0e0;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #000;
+}
+
+.copy-button:hover {
+    background-color: #cfcfcf;
+}
+
+body.dark-mode .copy-button {
+    background-color: #444;
+    color: #fff;
+}
+
+body.dark-mode .copy-button:hover {
+    background-color: #666;
+}
+/* Disabled copy-button styling */
+.copy-button:disabled {
+    background-color: #bbb;
+    color: #666;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+body.dark-mode .copy-button:disabled {
+    background-color: #2b2b2b;
+    color: #888;
+}
+
+/* Model select styling */
+#modelSelect {
+    margin-bottom: 10px;
+}
+
+.dot-animate span {
+    opacity: 0;
+    animation: blink 1.4s infinite;
+}
+.dot-animate span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.dot-animate span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+@keyframes blink {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    100% { opacity: 0; }
+}
+/* --- Refined Prompt Collapsible Section Modern Styles --- */
+#refinedPromptContainer {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fafafa;
+    /* margin-top: 20px; */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+body.dark-mode #refinedPromptContainer {
+    background-color: #1e1e1e;
+    border-color: #555;
+}
+
+#refinedPromptContainer > div,
+#recommendationsContainer > div:first-child,
+#markdownContainer > div:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background-color: inherit;
+    z-index: 10;
+    border-bottom: 1px solid #ccc;
+}
+
+#refinedPromptContainer label {
+    font-weight: 600;
+    font-size: 14px;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 10px 15px;
+    flex-grow: 1;
+    cursor: pointer;
+    user-select: none;
+}
+
+body.dark-mode #refinedPromptContainer label {
+    background-color: #2a2a2a;
+    color: #ccc;
+}
+
+#refinedPromptContainer .copy-button {
+    margin: 0 15px;
+}
+
+#refinedOutput {
+    margin-top: 0;
+    background: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    min-height: 150px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    white-space: normal;
+}
+
+body.dark-mode #refinedOutput {
+    background: #1e1e1e;
+    color: #f0f0f0;
+    border: 1px solid #555;
+    box-shadow: none;
+}
+/* Recommendations Container with scroll for overflow */
+#recommendationsContainer {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fafafa;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+body.dark-mode #recommendationsContainer {
+    background-color: #1e1e1e;
+    border-color: #555;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#recommendationsContainer label {
+    font-weight: 600;
+    font-size: 14px;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 10px 15px;
+    flex-grow: 1;
+    cursor: pointer;
+    user-select: none;
+}
+
+body.dark-mode #recommendationsContainer label {
+    background-color: #2a2a2a;
+    color: #ccc;
+}
+
+#recommendationsContainer .copy-button {
+    margin: 0 15px;
+}
+
+#markdownContainer {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fafafa;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+body.dark-mode #markdownContainer {
+    background-color: #1e1e1e;
+    border-color: #555;
+}
+
+#markdownContainer label {
+    font-weight: 600;
+    font-size: 14px;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 10px 15px;
+    flex-grow: 1;
+    cursor: pointer;
+    user-select: none;
+}
+
+body.dark-mode #markdownContainer label {
+    background-color: #2a2a2a;
+    color: #ccc;
+}
+
+#markdownContainer .copy-button {
+    margin: 0 15px;
+}
+
+.markdown-preview {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fdfdfd;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+body.dark-mode .markdown-preview {
+    background-color: #1e1e1e;
+    border-color: #555;
+}
+
+.markdown-header {
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-family: monospace;
+    border-bottom: 1px solid #ccc;
+}
+
+body.dark-mode .markdown-header {
+    background-color: #2a2a2a;
+    color: #ccc;
+    border-color: #444;
+}
+
+.markdown-code {
+    margin: 0;
+    padding: 16px;
+    background-color: transparent;
+    overflow-x: auto;
+}
+
+.markdown-code code {
+    font-family: monospace;
+}
+/* Highlight.js base override for transparent background */
+.hljs {
+    background: transparent !important;
+}
+
+/* Highlight.js: ensure code blocks and line numbers are styled consistently */
+.markdown-container pre code.hljs {
+    display: block;
+    padding-left: 3em;
+    counter-reset: linenumber;
+    background: transparent !important;
+    color: inherit !important;
+    text-shadow: none !important;
+}
+
+pre code.hljs {
+    background: none;
+    color: inherit;
+}
+
+.markdown-container pre code.hljs::before {
+    counter-increment: linenumber;
+    content: counter(linenumber);
+    display: inline-block;
+    width: 2em;
+    margin-left: -2em;
+    padding-right: 0.5em;
+    text-align: right;
+    opacity: 0.5;
+    user-select: none;
+}
+body.dark-mode #refinedPromptContainer > div,
+body.dark-mode #recommendationsContainer > div:first-child,
+body.dark-mode #markdownContainer > div:first-child {
+    background-color: #1e1e1e;
+    border-bottom: 1px solid #444;
+}
+/* Reduce spacing between bullet points in recommendations container */
+#recommendationsContainer ul {
+    margin-top: 15px;
+    margin-bottom: 0;
+    padding-left: 20px;
+    line-height: 1;
+}
+
+#recommendationsContainer li {
+    margin-bottom: 0;
+}
+
+.mode-toggle-pill {
+    display: inline-flex;
+    position: relative;
+    background: #ccc;
+    border-radius: 25px;
+    overflow: hidden;
+    font-size: 13px;
+    height: 34px;
+    width: 160px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.mode-toggle-pill input[type="radio"] {
+    display: none;
+}
+
+.mode-toggle-pill label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: color 0.3s ease;
+    color: #333;
+    line-height: 34px;
+    height: 34px;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.mode-toggle-pill label:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.mode-toggle-pill label:last-child {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.mode-toggle-pill input#vagueMode:checked ~ label[for="vagueMode"],
+.mode-toggle-pill input#structuredMode:checked ~ label[for="structuredMode"] {
+    color: white;
+}
+
+.pill-slider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    background: #4CAF50;
+    border-radius: 30px;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.mode-toggle-pill input#vagueMode:checked ~ .pill-slider {
+    width: 70px;
+    transform: translateX(0%);
+}
+
+.mode-toggle-pill input#structuredMode:checked ~ .pill-slider {
+    width: 100px;
+    transform: translateX(60px);
+}
+.mode-toggle-pill label {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 34px !important;
+}
+
+/* Pill toggle dark mode styles for proper contrast */
+@media (prefers-color-scheme: dark) {
+  .mode-toggle-pill {
+    background-color: #2d2d2d;
+  }
+  .mode-toggle-pill label {
+    color: #ccc;
+    background-color: transparent;
+  }
+}
+/* Toggle button for mode switch (pill) */
+.toggle-button {
+    cursor: pointer;
+}
+/* Header title row and mode toggle pill container for vertical centering */
+.header-title-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.mode-toggle-pill-container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
