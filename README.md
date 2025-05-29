@@ -34,12 +34,12 @@ git clone https://github.com/abhis-s/prompt-refiner.git
 cd prompt-refiner
 ```
 
-### 2. Create a .env File to Store Your OpenAI Key (Get it [Here](https://platform.openai.com/))
+### 2. Create a .env File to Store Your OpenAI Key (Get it from [Open AI Platform](https://platform.openai.com/))
+
 ```bash
 touch .env
 echo -e "OPENAI_API_KEY=your_private_key_here\nPORT=3001" >> .env
 ```
-
 
 ### 3. Install Dependencies
 

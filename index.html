@@ -1,163 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Prompt Refinement App</title>
     <link rel="stylesheet" href="style.css" />
     <style>
-        /* Highlight.js Line Numbers Plugin Styles */
-        pre code.hljs {
-            padding-left: 3.5em;
-            position: relative;
-        }
+      /* Highlight.js Line Numbers Plugin Styles */
+      pre code.hljs {
+        padding-left: 3.5em;
+        position: relative;
+      }
 
-        .hljs-ln-numbers {
-            text-align: right;
-            color: #999;
-            border-right: 1px solid #ccc;
-            vertical-align: top;
-            padding-right: 10px !important;
-            user-select: none;
-        }
+      .hljs-ln-numbers {
+        text-align: right;
+        color: #999;
+        border-right: 1px solid #ccc;
+        vertical-align: top;
+        padding-right: 10px !important;
+        user-select: none;
+      }
 
-        .hljs-ln-code {
-            padding-left: 15px !important;
-        }
+      .hljs-ln-code {
+        padding-left: 15px !important;
+      }
 
-        td.hljs-ln-numbers, td.hljs-ln-code {
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-        }
-        /* Light mode slider */
-        .slider {
-            background-color: #333;
-        }
+      td.hljs-ln-numbers,
+      td.hljs-ln-code {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+      }
+      /* Light mode slider */
+      .slider {
+        background-color: #333;
+      }
 
-        /* Dark mode slider */
-        body.dark-mode .slider {
-            background-color: #eee;
-        }
+      /* Dark mode slider */
+      body.dark-mode .slider {
+        background-color: #eee;
+      }
 
-        body.dark-mode input:checked + .slider {
-            background-color: #81c784;
-        }
+      body.dark-mode input:checked + .slider {
+        background-color: #81c784;
+      }
 
-        .header-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: nowrap;
-        }
+      .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+      }
 
-        .toggle-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            justify-content: center;
-            height: 100%;
-        }
+      .toggle-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+        height: 100%;
+      }
 
-        .copy-button {
-            float: right;
-            margin-top: -26px;
-            margin-bottom: 10px;
-            background-color: #ddd;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
+      .copy-button {
+        float: right;
+        margin-top: -26px;
+        margin-bottom: 10px;
+        background-color: #ddd;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+      }
 
-        .copy-button:hover {
-            background-color: #ccc;
-        }
+      .copy-button:hover {
+        background-color: #ccc;
+      }
 
-        body.dark-mode .copy-button {
-            background-color: #444;
-            color: #fff;
-        }
+      body.dark-mode .copy-button {
+        background-color: #444;
+        color: #fff;
+      }
 
-        body.dark-mode .copy-button:hover {
-            background-color: #666;
-        }
+      body.dark-mode .copy-button:hover {
+        background-color: #666;
+      }
 
-        #modelSelect {
-            margin-bottom: 10px;
-        }
+      #modelSelect {
+        margin-bottom: 10px;
+      }
 
-        /* Placeholder-like behavior for #refinedOutput */
-        #refinedOutput:empty::before {
-          content: "Refined prompt will appear here...";
-          color: #999;
-          font-style: italic;
-        }
-        body.dark-mode #refinedOutput:empty::before {
-          color: #777;
-        }
+      /* Placeholder-like behavior for #refinedOutput */
+      #refinedOutput:empty::before {
+        content: "Refined prompt will appear here...";
+        color: #999;
+        font-style: italic;
+      }
+      body.dark-mode #refinedOutput:empty::before {
+        color: #777;
+      }
     </style>
     <!-- Highlight.js for syntax highlighting and line numbers -->
-    <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
-    <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" disabled>
+    <link
+      id="hljs-light"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css"
+    />
+    <link
+      id="hljs-dark"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css"
+      disabled
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="header-container">
-      <div class="header-title-row" style="display: flex; align-items: center;">
+      <div class="header-title-row" style="display: flex; align-items: center">
         <h1>Prompt Refinement App</h1>
-        <div id="mode-toggle-pill-header" class="mode-toggle-pill" style="margin-left: 24px;">
-          <input type="radio" id="vagueMode" name="mode" value="vague">
-          <label for="vagueMode" style="width: 70px;">Vague</label>
-          <input type="radio" id="structuredMode" name="mode" value="structured" checked>
-          <label for="structuredMode" style="width: 100px;">Structured</label>
+        <div
+          id="mode-toggle-pill-header"
+          class="mode-toggle-pill"
+          style="margin-left: 24px"
+        >
+          <input type="radio" id="vagueMode" name="mode" value="vague" />
+          <label for="vagueMode" style="width: 70px">Vague</label>
+          <input
+            type="radio"
+            id="structuredMode"
+            name="mode"
+            value="structured"
+            checked
+          />
+          <label for="structuredMode" style="width: 100px">Structured</label>
           <span class="pill-slider"></span>
         </div>
-        <button id="loadCacheBtn" class="modern-button"><strong>Load Cache</strong></button>
-        <div id="delete-cache-wrapper" style="display: none;">
-          <button id="delete-cache-button" class="nav-button red-button" disabled title="Delete cached data">
-            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3">
-              <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/>
+        <button id="loadCacheBtn" class="modern-button">
+          <strong>Load Cache</strong>
+        </button>
+        <div id="delete-cache-wrapper" style="display: none">
+          <button
+            id="delete-cache-button"
+            class="nav-button red-button"
+            disabled
+            title="Delete cached data"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="20px"
+              viewBox="0 -960 960 960"
+              width="20px"
+              fill="#e3e3e3"
+            >
+              <path
+                d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"
+              />
             </svg>
           </button>
         </div>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    function updateCacheButtons() {
-      const loadBtn = document.getElementById("loadCacheBtn");
-      const deleteWrapper = document.getElementById("delete-cache-wrapper");
-      const deleteBtn = document.getElementById("delete-cache-button");
-      // Use promptCache for cache presence check
-      const cachedData = localStorage.getItem("promptCache");
+        <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            function updateCacheButtons() {
+              const loadBtn = document.getElementById("loadCacheBtn");
+              const deleteWrapper = document.getElementById(
+                "delete-cache-wrapper"
+              );
+              const deleteBtn = document.getElementById("delete-cache-button");
+              // Use promptCache for cache presence check
+              const cachedData = localStorage.getItem("promptCache");
 
-      if (!cachedData) {
-        loadBtn.disabled = true;
-        loadBtn.classList.add("disabled");
-        loadBtn.innerHTML = "<strong>No Cache</strong>";
-        deleteWrapper.style.display = "none";
-      } else {
-        loadBtn.disabled = false;
-        loadBtn.classList.remove("disabled");
-        loadBtn.innerHTML = "<strong>Load Cache</strong>";
-        deleteWrapper.style.display = "inline-block";
-        deleteBtn.disabled = false;
-      }
-    }
+              if (!cachedData) {
+                loadBtn.disabled = true;
+                loadBtn.classList.add("disabled");
+                loadBtn.innerHTML = "<strong>No Cache</strong>";
+                deleteWrapper.style.display = "none";
+              } else {
+                loadBtn.disabled = false;
+                loadBtn.classList.remove("disabled");
+                loadBtn.innerHTML = "<strong>Load Cache</strong>";
+                deleteWrapper.style.display = "inline-block";
+                deleteBtn.disabled = false;
+              }
+            }
 
-    // Call on load
-    updateCacheButtons();
+            // Call on load
+            updateCacheButtons();
 
-    // Hook into delete cache button
-    document.getElementById("delete-cache-button").addEventListener("click", () => {
-      localStorage.removeItem("promptCache");
-      updateCacheButtons();
-    });
+            // Hook into delete cache button
+            document
+              .getElementById("delete-cache-button")
+              .addEventListener("click", () => {
+                localStorage.removeItem("promptCache");
+                updateCacheButtons();
+              });
 
-    // Call this after saving to cache elsewhere in the code:
-    window.updateCacheButtons = updateCacheButtons;
-  });
-</script>
+            // Call this after saving to cache elsewhere in the code:
+            window.updateCacheButtons = updateCacheButtons;
+          });
+        </script>
       </div>
       <div class="toggle-container">
         <div class="toggle-row">
@@ -173,227 +211,375 @@
     </div>
 
     <div class="container">
-        <div class="left-column">
-            <div class="label-inline-group" style="margin-top: 20px;">
-                <label for="sampleSelect">Choose a Sample:</label>
-                <select id="sampleSelect" onchange="populateFields(this.value)">
-                    <option value="">-- Select a sample --</option>
-                    <option value="sort">Sort List</option>
-                    <option value="email">Validate Email</option>
-                    <option value="blank">Blank</option>
-                </select>
-            <button id="generateBtnTop" onclick="generatePrompt()" disabled style="margin-left: 8px; margin-top: 4px; background-color: #4CAF50; color: white; border: none; padding: 0; border-radius: 6px; height: 44px; width: 80px;">
-                ➤
+      <div class="left-column">
+        <div class="label-inline-group" style="margin-top: 20px">
+          <label for="sampleSelect">Choose a Sample:</label>
+          <select id="sampleSelect" onchange="populateFields(this.value)">
+            <option value="">-- Select a sample --</option>
+            <option value="sort">Sort List</option>
+            <option value="email">Validate Email</option>
+            <option value="blank">Blank</option>
+          </select>
+          <button
+            id="generateBtnTop"
+            onclick="generatePrompt()"
+            disabled
+            style="
+              margin-left: 8px;
+              margin-top: 4px;
+              background-color: #4caf50;
+              color: white;
+              border: none;
+              padding: 0;
+              border-radius: 6px;
+              height: 44px;
+              width: 80px;
+            "
+          >
+            ➤
+          </button>
+        </div>
+        <div style="height: 10px"></div>
+
+        <div class="label-inline-group">
+          <label for="modelSelect">Select Model:</label>
+          <select id="modelSelect">
+            <option value="gpt-4.1">
+              GPT-4.1 (High Quality) | SWE-Bench 54.6%
+            </option>
+            <option value="gpt-4o">
+              GPT-4o (Fast, Default) | SWE-Bench 33.2%
+            </option>
+            <option value="gpt-4.1-mini">
+              GPT-4.1 Mini (Compact, Smart) | SWE-Bench Not Specified
+            </option>
+          </select>
+        </div>
+
+        <div class="label-inline-group">
+          <label for="languageSelect">Language to use:</label>
+          <select id="languageSelect">
+            <option value="Python" data-highlight="language-python" selected>
+              Python
+            </option>
+          </select>
+        </div>
+
+        <!-- Mode Toggle Switch (Pill) moved to header -->
+        <div style="height: 20px"></div>
+
+        <!-- Vague Prompt Container -->
+        <div id="vaguePromptContainer">
+          <label for="vaguePrompt">Vague Prompt:</label>
+          <textarea
+            id="vaguePrompt"
+            rows="3"
+            placeholder="e.g., sort a list"
+          ></textarea>
+          <br />
+          <br />
+        </div>
+        <!-- Structured Prompt Fields -->
+        <div class="structured-section">
+          <div class="label-inline-group">
+            <label for="functionNameInput">Function Name:</label>
+            <textarea
+              id="functionName"
+              rows="1"
+              placeholder="e.g., sort_list"
+              class="input"
+            ></textarea>
+          </div>
+          <br />
+          <div class="label-inline-group">
+            <label for="argumentsInput">Arguments:</label>
+            <textarea
+              id="arguments"
+              rows="2"
+              placeholder="e.g., input_list: List[int]"
+              class="input"
+            ></textarea>
+          </div>
+          <br />
+          <div class="label-inline-group">
+            <label for="returnTypeInput">Return Type:</label>
+            <textarea
+              id="returnType"
+              rows="1"
+              placeholder="e.g., List[int]"
+              class="input"
+            ></textarea>
+          </div>
+          <br />
+          <div class="label-inline-group">
+            <label for="constraintsInput">Constraints:</label>
+            <textarea
+              id="constraints"
+              rows="2"
+              placeholder="e.g., no built-in functions, O(n log n)"
+              class="input"
+            ></textarea>
+          </div>
+          <br />
+          <div class="label-inline-group">
+            <label for="edgeCasesInput">Edge Cases:</label>
+            <textarea
+              id="edgeCases"
+              rows="2"
+              placeholder="e.g., empty list, duplicates"
+              class="input"
+            ></textarea>
+          </div>
+          <br />
+          <div class="label-inline-group">
+            <label for="expectedBehaviorInput">Expected Behavior:</label>
+            <textarea
+              id="expectedBehavior"
+              rows="2"
+              placeholder="e.g., return a new sorted list"
+              class="input"
+            ></textarea>
+          </div>
+          <br />
+          <div class="label-inline-group">
+            <label for="examplesInput">Input/Output Examples:</label>
+            <textarea
+              id="examples"
+              rows="2"
+              placeholder="e.g., input: [3,1,2] → output: [1,2,3]"
+              class="input"
+            ></textarea>
+          </div>
+          <br />
+        </div>
+        <button id="generateBtnBtm" onclick="generatePrompt()" disabled>
+          Generate Refined Prompt
+        </button>
+      </div>
+      <div class="right-column">
+        <div id="refinedPromptContainer" style="margin-top: 25px">
+          <div>
+            <label style="cursor: pointer" onclick="toggleRefinedPrompt()"
+              >Generated Refined Prompt ▼</label
+            >
+            <button
+              class="copy-button"
+              onclick="copyToClipboard('refinedOutput')"
+              disabled
+            >
+              Copy
             </button>
-            </div>
-            <div style="height: 10px;"></div>
-
-
-            <div class="label-inline-group">
-                <label for="modelSelect">Select Model:</label>
-                <select id="modelSelect">
-                    <option value="gpt-4.1">GPT-4.1 (High Quality) | SWE-Bench 54.6%</option>
-                    <option value="gpt-4o">GPT-4o (Fast, Default) | SWE-Bench 33.2%</option>
-                    <option value="gpt-4.1-mini">GPT-4.1 Mini (Compact, Smart) | SWE-Bench Not Specified</option>
-                </select>
-            </div>
-
-            <div class="label-inline-group">
-                <label for="languageSelect">Language to use:</label>
-                <select id="languageSelect">
-                    <option value="Python" data-highlight="language-python" selected>Python</option>
-                </select>
-            </div>
-
-            <!-- Mode Toggle Switch (Pill) moved to header -->
-            <div style="height: 20px;"></div>
-
-            <!-- Vague Prompt Container -->
-            <div id="vaguePromptContainer">
-              <label for="vaguePrompt">Vague Prompt:</label>
-              <textarea id="vaguePrompt" rows="3" placeholder="e.g., sort a list"></textarea>
-              <br />
-              <br />
-            </div>
-            <!-- Structured Prompt Fields -->
-            <div class="structured-section">
-              <div class="label-inline-group">
-                  <label for="functionNameInput">Function Name:</label>
-                  <textarea id="functionName" rows="1" placeholder="e.g., sort_list" class="input"></textarea>
-              </div>
-              <br />
-              <div class="label-inline-group">
-                  <label for="argumentsInput">Arguments:</label>
-                  <textarea id="arguments" rows="2" placeholder="e.g., input_list: List[int]" class="input"></textarea>
-              </div>
-              <br />
-              <div class="label-inline-group">
-                  <label for="returnTypeInput">Return Type:</label>
-                  <textarea id="returnType" rows="1" placeholder="e.g., List[int]" class="input"></textarea>
-              </div>
-              <br />
-              <div class="label-inline-group">
-                  <label for="constraintsInput">Constraints:</label>
-                  <textarea id="constraints" rows="2" placeholder="e.g., no built-in functions, O(n log n)" class="input"></textarea>
-              </div>
-              <br />
-              <div class="label-inline-group">
-                  <label for="edgeCasesInput">Edge Cases:</label>
-                  <textarea id="edgeCases" rows="2" placeholder="e.g., empty list, duplicates" class="input"></textarea>
-              </div>
-              <br />
-              <div class="label-inline-group">
-                  <label for="expectedBehaviorInput">Expected Behavior:</label>
-                  <textarea id="expectedBehavior" rows="2" placeholder="e.g., return a new sorted list" class="input"></textarea>
-              </div>
-              <br />
-              <div class="label-inline-group">
-                  <label for="examplesInput">Input/Output Examples:</label>
-                  <textarea id="examples" rows="2" placeholder="e.g., input: [3,1,2] → output: [1,2,3]" class="input"></textarea>
-              </div>
-              <br />
-            </div>
-            <button id="generateBtnBtm" onclick="generatePrompt()" disabled>Generate Refined Prompt</button>
+          </div>
+          <div class="output" id="refinedOutput"></div>
         </div>
-        <div class="right-column">
-            <div id="refinedPromptContainer" style="margin-top: 25px;">
-              <div>
-                <label style="cursor: pointer;" onclick="toggleRefinedPrompt()">Generated Refined Prompt ▼</label>
-                <button class="copy-button" onclick="copyToClipboard('refinedOutput')" disabled>Copy</button>
-              </div>
-              <div class="output" id="refinedOutput"></div>
-            </div>
-            <div id="recommendationsContainer" style="display: none; margin-top: 20px;">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <label style="cursor: pointer;" onclick="toggleRecommendations()">Recommendations, Suggestions, and Comments ▼</label>
-                <button class="copy-button" onclick="copyToClipboard('recommendationsBox')" disabled>Copy</button>
-              </div>
-              <div id="recommendationsBox" class="output" style="margin-bottom: 0px;"></div>
-            </div>
-            <div id="markdownContainer" style="display: none; margin-top: 20px;">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <label style="cursor: pointer;" onclick="toggleMarkdown()">Markdown Output ▼</label>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                  <button class="copy-button" onclick="enableMarkdownEdit()" title="Edit">
-                      <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3">
-                          <path d="M216-216h51l375-375-51-51-375 375v51Zm-72 72v-153l498-498q11-11 23.84-16 12.83-5 27-5 14.16 0 27.16 5t24 16l51 51q11 11 16 24t5 26.54q0 14.45-5.02 27.54T795-642L297-144H144Zm600-549-51-51 51 51Zm-127.95 76.95L591-642l51 51-25.95-25.05Z"/>
-                      </svg>
-                  </button>
-                  <button class="copy-button" onclick="copyToClipboard('markdownBox')" disabled>Copy</button>
-                </div>
-              </div>
-              <div id="markdownBox" class="output" style="margin-bottom: 0px;">
-                <div class="markdown-preview">
-                  <div class="markdown-header">python</div>
-                  <pre class="markdown-code"><code class="language-python"></code></pre>
-                </div>
-              </div>
-            </div>
-            <br />
-            <br />
-            <!-- Pyodide Run Code Button and Output -->
-            <button id="runCodeBtn" onclick="executeGeneratedCode()" style="display: none;">Run Code</button>
-            <pre id="executionResult" class="output" style="display: none;"></pre>
+        <div
+          id="recommendationsContainer"
+          style="display: none; margin-top: 20px"
+        >
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            "
+          >
+            <label style="cursor: pointer" onclick="toggleRecommendations()"
+              >Recommendations, Suggestions, and Comments ▼</label
+            >
+            <button
+              class="copy-button"
+              onclick="copyToClipboard('recommendationsBox')"
+              disabled
+            >
+              Copy
+            </button>
+          </div>
+          <div
+            id="recommendationsBox"
+            class="output"
+            style="margin-bottom: 0px"
+          ></div>
         </div>
+        <div id="markdownContainer" style="display: none; margin-top: 20px">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            "
+          >
+            <label style="cursor: pointer" onclick="toggleMarkdown()"
+              >Markdown Output ▼</label
+            >
+            <div style="display: flex; gap: 8px; align-items: center">
+              <button
+                class="copy-button"
+                onclick="enableMarkdownEdit()"
+                title="Edit"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="#e3e3e3"
+                >
+                  <path
+                    d="M216-216h51l375-375-51-51-375 375v51Zm-72 72v-153l498-498q11-11 23.84-16 12.83-5 27-5 14.16 0 27.16 5t24 16l51 51q11 11 16 24t5 26.54q0 14.45-5.02 27.54T795-642L297-144H144Zm600-549-51-51 51 51Zm-127.95 76.95L591-642l51 51-25.95-25.05Z"
+                  />
+                </svg>
+              </button>
+              <button
+                class="copy-button"
+                onclick="copyToClipboard('markdownBox')"
+                disabled
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+          <div id="markdownBox" class="output" style="margin-bottom: 0px">
+            <div class="markdown-preview">
+              <div class="markdown-header">python</div>
+              <pre
+                class="markdown-code"
+              ><code class="language-python"></code></pre>
+            </div>
+          </div>
+        </div>
+        <br />
+        <br />
+        <!-- Pyodide Run Code Button and Output -->
+        <button
+          id="runCodeBtn"
+          onclick="executeGeneratedCode()"
+          style="display: none"
+        >
+          Run Code
+        </button>
+        <pre id="executionResult" class="output" style="display: none"></pre>
+      </div>
     </div>
 
     <script>
-function checkEnableButtons() {
-    const vague = document.getElementById("vaguePrompt").value.trim();
-    const fn = document.getElementById("functionName").value.trim();
-    const enable = vague !== "" || fn !== "";
-    document.getElementById("generateBtnTop").disabled = !enable;
-    document.getElementById("generateBtnBtm").disabled = !enable;
-}
+      function checkEnableButtons() {
+        const vague = document.getElementById("vaguePrompt").value.trim();
+        const fn = document.getElementById("functionName").value.trim();
+        const enable = vague !== "" || fn !== "";
+        document.getElementById("generateBtnTop").disabled = !enable;
+        document.getElementById("generateBtnBtm").disabled = !enable;
+      }
 
-// Listen for input on vague prompt and function name (textarea now)
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("vaguePrompt").addEventListener("input", checkEnableButtons);
-    document.getElementById("functionName").addEventListener("input", checkEnableButtons);
-    checkEnableButtons();
-});
-// Toggle between Structured and Vague Mode
-document.addEventListener("DOMContentLoaded", function () {
-  // The mode toggle pill is now in the header, so listeners must attach to those radios
-  document.getElementById('vagueMode').addEventListener('change', updateModeToggle);
-  document.getElementById('structuredMode').addEventListener('change', updateModeToggle);
-  function updateModeToggle() {
-    const isStructured = document.getElementById('structuredMode').checked;
-    document.querySelectorAll('.structured-section').forEach(section => {
-      section.style.display = isStructured ? 'block' : 'none';
-    });
-    document.getElementById('vaguePromptContainer').style.display = isStructured ? 'none' : 'block';
-  }
-  updateModeToggle();
-});
-        // Collapsible Refined Prompt Section
-        let refinedPromptVisible = true;
-        function toggleRefinedPrompt() {
-            refinedPromptVisible = !refinedPromptVisible;
-            const section = document.getElementById("refinedOutput");
-            const label = document.querySelector('#refinedPromptContainer label');
-            section.style.display = refinedPromptVisible ? 'block' : 'none';
-            label.innerText = refinedPromptVisible ? "Generated Refined Prompt ▼" : "Generated Refined Prompt ▶";
+      // Listen for input on vague prompt and function name (textarea now)
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .getElementById("vaguePrompt")
+          .addEventListener("input", checkEnableButtons);
+        document
+          .getElementById("functionName")
+          .addEventListener("input", checkEnableButtons);
+        checkEnableButtons();
+      });
+      // Toggle between Structured and Vague Mode
+      document.addEventListener("DOMContentLoaded", function () {
+        // The mode toggle pill is now in the header, so listeners must attach to those radios
+        document
+          .getElementById("vagueMode")
+          .addEventListener("change", updateModeToggle);
+        document
+          .getElementById("structuredMode")
+          .addEventListener("change", updateModeToggle);
+        function updateModeToggle() {
+          const isStructured =
+            document.getElementById("structuredMode").checked;
+          document
+            .querySelectorAll(".structured-section")
+            .forEach((section) => {
+              section.style.display = isStructured ? "block" : "none";
+            });
+          document.getElementById("vaguePromptContainer").style.display =
+            isStructured ? "none" : "block";
         }
+        updateModeToggle();
+      });
+      // Collapsible Refined Prompt Section
+      let refinedPromptVisible = true;
+      function toggleRefinedPrompt() {
+        refinedPromptVisible = !refinedPromptVisible;
+        const section = document.getElementById("refinedOutput");
+        const label = document.querySelector("#refinedPromptContainer label");
+        section.style.display = refinedPromptVisible ? "block" : "none";
+        label.innerText = refinedPromptVisible
+          ? "Generated Refined Prompt ▼"
+          : "Generated Refined Prompt ▶";
+      }
 
-        // Collapsible Recommendations Section
-        let recommendationsVisible = true;
-        function toggleRecommendations() {
-            recommendationsVisible = !recommendationsVisible;
-            const section = document.getElementById("recommendationsBox");
-            const label = document.querySelector('#recommendationsContainer label');
-            section.style.display = recommendationsVisible ? 'block' : 'none';
-            label.innerText = recommendationsVisible ? "Recommendations, Suggestions, and Comments ▼" : "Recommendations, Suggestions, and Comments ▶";
-        }
+      // Collapsible Recommendations Section
+      let recommendationsVisible = true;
+      function toggleRecommendations() {
+        recommendationsVisible = !recommendationsVisible;
+        const section = document.getElementById("recommendationsBox");
+        const label = document.querySelector("#recommendationsContainer label");
+        section.style.display = recommendationsVisible ? "block" : "none";
+        label.innerText = recommendationsVisible
+          ? "Recommendations, Suggestions, and Comments ▼"
+          : "Recommendations, Suggestions, and Comments ▶";
+      }
 
+      // Collapsible Markdown Output Section
+      let markdownVisible = true;
+      function toggleMarkdown() {
+        markdownVisible = !markdownVisible;
+        const section = document.getElementById("markdownBox");
+        const label = document.querySelector("#markdownContainer label");
+        section.style.display = markdownVisible ? "block" : "none";
+        label.innerText = markdownVisible
+          ? "Markdown Output ▼"
+          : "Markdown Output ▶";
+      }
 
-        // Collapsible Markdown Output Section
-        let markdownVisible = true;
-        function toggleMarkdown() {
-            markdownVisible = !markdownVisible;
-            const section = document.getElementById("markdownBox");
-            const label = document.querySelector('#markdownContainer label');
-            section.style.display = markdownVisible ? 'block' : 'none';
-            label.innerText = markdownVisible ? "Markdown Output ▼" : "Markdown Output ▶";
-        }
+      let lastGeneratedCode = "";
 
-        let lastGeneratedCode = "";
+      // Enhanced Markdown to HTML for recommendations (headings, lists, blockquotes, links, etc.)
+      function simpleMarkdownToHTML(text) {
+        if (!text) return "";
 
-        // Enhanced Markdown to HTML for recommendations (headings, lists, blockquotes, links, etc.)
-        function simpleMarkdownToHTML(text) {
-          if (!text) return "";
+        return text
+          .replace(/```([\s\S]*?)```/g, "<pre><code>$1</code></pre>") // code block
+          .replace(/^### (.*$)/gim, "<h3>$1</h3>") // h3
+          .replace(/^## (.*$)/gim, "<h2>$1</h2>") // h2
+          .replace(/^# (.*$)/gim, "<h1>$1</h1>") // h1
+          .replace(/^\> (.*$)/gim, "<blockquote>$1</blockquote>") // blockquote
+          .replace(/\*\*([^\*]+)\*\*/g, "<strong>$1</strong>") // bold
+          .replace(/\*([^\*]+)\*/g, "<em>$1</em>") // italic
+          .replace(/`([^`]+)`/g, "<code>$1</code>") // inline code
+          .replace(
+            /\[([^\]]+)\]\(([^)]+)\)/g,
+            '<a href="$2" target="_blank">$1</a>'
+          ) // links
+          .replace(/^\s*-\s+(.*)$/gm, "<li>$1</li>") // list item
+          .replace(/(<li>.*<\/li>)/g, "<ul>$1</ul>") // wrap in ul
+          .replace(/^\s*---\s*$/gm, "<hr>") // horizontal rule
+          .replace(/\n/g, "<br>"); // line breaks
+      }
 
-          return text
-            .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')                // code block
-            .replace(/^### (.*$)/gim, '<h3>$1</h3>')                                    // h3
-            .replace(/^## (.*$)/gim, '<h2>$1</h2>')                                     // h2
-            .replace(/^# (.*$)/gim, '<h1>$1</h1>')                                      // h1
-            .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')                    // blockquote
-            .replace(/\*\*([^\*]+)\*\*/g, '<strong>$1</strong>')                        // bold
-            .replace(/\*([^\*]+)\*/g, '<em>$1</em>')                                    // italic
-            .replace(/`([^`]+)`/g, '<code>$1</code>')                                   // inline code
-            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>') // links
-            .replace(/^\s*-\s+(.*)$/gm, '<li>$1</li>')                                  // list item
-            .replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>')                                  // wrap in ul
-            .replace(/^\s*---\s*$/gm, '<hr>')                                           // horizontal rule
-            .replace(/\n/g, '<br>');                                                    // line breaks
-        }
+      async function generatePrompt() {
+        const isStructured = document.getElementById("structuredMode").checked;
+        const language = document.getElementById("languageSelect").value;
+        const langClass =
+          document.getElementById("languageSelect").selectedOptions[0].dataset
+            .highlight || "plaintext";
 
-async function generatePrompt() {
-  const isStructured = document.getElementById("structuredMode").checked;
-  const language = document.getElementById("languageSelect").value;
-  const langClass = document.getElementById("languageSelect").selectedOptions[0].dataset.highlight || "plaintext";
-
-  let result = "";
-  if (isStructured) {
-    const fnName = document.getElementById("functionName").value;
-    const args = document.getElementById("arguments").value;
-    const returnType = document.getElementById("returnType").value;
-    const constraints = document.getElementById("constraints").value;
-    const edgeCases = document.getElementById("edgeCases").value;
-    const expected = document.getElementById("expectedBehavior").value;
-    const examples = document.getElementById("examples").value;
-    result = `Language: ${language}
+        let result = "";
+        if (isStructured) {
+          const fnName = document.getElementById("functionName").value;
+          const args = document.getElementById("arguments").value;
+          const returnType = document.getElementById("returnType").value;
+          const constraints = document.getElementById("constraints").value;
+          const edgeCases = document.getElementById("edgeCases").value;
+          const expected = document.getElementById("expectedBehavior").value;
+          const examples = document.getElementById("examples").value;
+          result = `Language: ${language}
 Function: ${fnName || "[unspecified]"}
 Arguments: ${args}
 Return: ${returnType}
@@ -409,434 +595,503 @@ ${expected}
 
 Examples:
 ${examples}`;
-  } else {
-    const vaguePrompt = document.getElementById("vaguePrompt").value;
-    result = `Language: ${language}
+        } else {
+          const vaguePrompt = document.getElementById("vaguePrompt").value;
+          result = `Language: ${language}
 Objective:
 ${vaguePrompt}`;
-  }
+        }
 
-  document.getElementById("refinedOutput").innerText = result;
-  document.querySelector('.copy-button[onclick*="refinedOutput"]').disabled = !result.trim();
-  // Always show refined prompt section if new prompt is generated
-  if (!refinedPromptVisible) {
-      toggleRefinedPrompt();
-  }
-  // Focus and scroll refinedOutput into view after populating
-  document.getElementById("refinedOutput").scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById("refinedOutput").innerText = result;
+        document.querySelector(
+          '.copy-button[onclick*="refinedOutput"]'
+        ).disabled = !result.trim();
+        // Always show refined prompt section if new prompt is generated
+        if (!refinedPromptVisible) {
+          toggleRefinedPrompt();
+        }
+        // Focus and scroll refinedOutput into view after populating
+        document
+          .getElementById("refinedOutput")
+          .scrollIntoView({ behavior: "smooth", block: "center" });
 
-  // Show loading message for recommendations with animated dots
-  const loadingMsg = 'Code Generation in Progress<span class="dot-animate"><span>.</span><span>.</span><span>.</span></span>';
-  document.getElementById("recommendationsBox").innerHTML = loadingMsg;
-  document.getElementById("recommendationsContainer").style.display = "block";
-  document.getElementById("markdownBox").innerHTML = loadingMsg;
-  document.getElementById("markdownContainer").style.display = "block";
+        // Show loading message for recommendations with animated dots
+        const loadingMsg =
+          'Code Generation in Progress<span class="dot-animate"><span>.</span><span>.</span><span>.</span></span>';
+        document.getElementById("recommendationsBox").innerHTML = loadingMsg;
+        document.getElementById("recommendationsContainer").style.display =
+          "block";
+        document.getElementById("markdownBox").innerHTML = loadingMsg;
+        document.getElementById("markdownContainer").style.display = "block";
 
-  try {
-      const model = document.getElementById("modelSelect").value;
-      const response = await fetch("http://localhost:3001/generate-code", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: result, model, mode: isStructured ? "structured" : "vague" })
-      });
-      const data = await response.json();
-      const fullText = data.code || "No code generated.";
-      // Extract code blocks and recommendations using updated logic
-      let codeBlocks = [...fullText.matchAll(/```(\w+)\s*([\s\S]*?)\s*```/g)];
-      let code = "", recommendations = fullText;
-      if (codeBlocks.length > 0) {
-          code = codeBlocks
-              .map(match =>
-                  match[2]
-                      .split('\n')
-                      .filter(line => line.trim() !== '')
-                      .join('\n')
-                      .trim()
+        try {
+          const model = document.getElementById("modelSelect").value;
+          const response = await fetch("http://localhost:3001/generate-code", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              prompt: result,
+              model,
+              mode: isStructured ? "structured" : "vague",
+            }),
+          });
+          const data = await response.json();
+          const fullText = data.code || "No code generated.";
+          // Extract code blocks and recommendations using updated logic
+          let codeBlocks = [
+            ...fullText.matchAll(/```(\w+)\s*([\s\S]*?)\s*```/g),
+          ];
+          let code = "",
+            recommendations = fullText;
+          if (codeBlocks.length > 0) {
+            code = codeBlocks
+              .map((match) =>
+                match[2]
+                  .split("\n")
+                  .filter((line) => line.trim() !== "")
+                  .join("\n")
+                  .trim()
               )
               .join("\n\n")
               .trim();
-          for (const match of codeBlocks) {
-              recommendations = recommendations.replace(match[0], '');
+            for (const match of codeBlocks) {
+              recommendations = recommendations.replace(match[0], "");
+            }
+            recommendations = recommendations.trim();
           }
-          recommendations = recommendations.trim();
-      }
-      lastGeneratedCode = code;
-      // Insert code only in markdown preview
-      const markdownBox = document.getElementById("markdownBox");
-      markdownBox.innerHTML = code ? `
+          lastGeneratedCode = code;
+          // Insert code only in markdown preview
+          const markdownBox = document.getElementById("markdownBox");
+          markdownBox.innerHTML = code
+            ? `
         <div class="markdown-preview">
           <div class="markdown-header">${language.toLowerCase()}</div>
           <pre class="markdown-code line-numbers"><code class="${langClass}">${code}</code></pre>
-        </div>` : "No code block detected.";
-      // Enable/disable the copy button for markdownBox based on code
-      document.querySelector('.copy-button[onclick*="markdownBox"]').disabled = !code;
-      // Highlight.js highlight code after inserting
-      if (window.hljs) {
-        const codeBlocks = markdownBox.querySelectorAll("pre code");
-        codeBlocks.forEach(block => {
-          window.hljs.highlightElement(block);
-        });
+        </div>`
+            : "No code block detected.";
+          // Enable/disable the copy button for markdownBox based on code
+          document.querySelector(
+            '.copy-button[onclick*="markdownBox"]'
+          ).disabled = !code;
+          // Highlight.js highlight code after inserting
+          if (window.hljs) {
+            const codeBlocks = markdownBox.querySelectorAll("pre code");
+            codeBlocks.forEach((block) => {
+              window.hljs.highlightElement(block);
+            });
+          }
+
+          document.getElementById("recommendationsBox").innerHTML =
+            simpleMarkdownToHTML(
+              recommendations || "No recommendations provided."
+            );
+          document.querySelector(
+            '.copy-button[onclick*="recommendationsBox"]'
+          ).disabled = !recommendations;
+
+          // Show the Run Code button if code is present
+          document.getElementById("runCodeBtn").style.display = "inline-block";
+          // Collapse refined prompt after generation
+          if (refinedPromptVisible) {
+            toggleRefinedPrompt();
+          }
+
+          // --- Save to localStorage as promptCache ---
+          const cacheKey = "promptCache";
+          const cacheData = {
+            mode: isStructured ? "structured" : "vague",
+            model: model,
+            sample: document.getElementById("sampleSelect").value,
+            output: fullText,
+            recommendations: recommendations,
+            refinedPrompt: result,
+          };
+          if (isStructured) {
+            cacheData.functionName =
+              document.getElementById("functionName").value;
+            cacheData.arguments = document.getElementById("arguments").value;
+            cacheData.returnType = document.getElementById("returnType").value;
+            cacheData.constraints =
+              document.getElementById("constraints").value;
+            cacheData.edgeCases = document.getElementById("edgeCases").value;
+            cacheData.expectedBehavior =
+              document.getElementById("expectedBehavior").value;
+            cacheData.examples = document.getElementById("examples").value;
+          } else {
+            cacheData.vaguePrompt =
+              document.getElementById("vaguePrompt").value;
+          }
+          localStorage.setItem("promptCache", JSON.stringify(cacheData));
+          // Ensure delete cache button is enabled after saving cache
+          document.getElementById("delete-cache-button").disabled = false;
+          // Ensure Load Cache button is enabled after saving cache
+          document.getElementById("loadCacheBtn").disabled = false;
+          // Show delete cache wrapper after saving cache
+          document.getElementById("delete-cache-wrapper").style.display =
+            "block";
+          // Call updateCacheButtons if available
+          if (window.updateCacheButtons) window.updateCacheButtons();
+          // --- End localStorage save ---
+        } catch (err) {
+          const markdownBox = document.getElementById("markdownBox");
+          markdownBox.innerHTML = "Error: " + err.message;
+          document.getElementById("runCodeBtn").style.display = "none";
+        }
       }
 
-      document.getElementById("recommendationsBox").innerHTML = simpleMarkdownToHTML(recommendations || "No recommendations provided.");
-      document.querySelector('.copy-button[onclick*="recommendationsBox"]').disabled = !recommendations;
+      // --- Pyodide Integration ---
+      let pyodideReady = false;
+      let pyodide = null;
 
-      // Show the Run Code button if code is present
-      document.getElementById("runCodeBtn").style.display = "inline-block";
-      // Collapse refined prompt after generation
-      if (refinedPromptVisible) {
-          toggleRefinedPrompt();
-      }
+      async function executeGeneratedCode() {
+        if (!pyodideReady) {
+          alert("Python environment is still loading...");
+          return;
+        }
 
-      // --- Save to localStorage as promptCache ---
-      const cacheKey = "promptCache";
-      const cacheData = {
-        mode: isStructured ? "structured" : "vague",
-        model: model,
-        sample: document.getElementById("sampleSelect").value,
-        output: fullText,
-        recommendations: recommendations,
-        refinedPrompt: result,
-      };
-      if (isStructured) {
-        cacheData.functionName = document.getElementById("functionName").value;
-        cacheData.arguments = document.getElementById("arguments").value;
-        cacheData.returnType = document.getElementById("returnType").value;
-        cacheData.constraints = document.getElementById("constraints").value;
-        cacheData.edgeCases = document.getElementById("edgeCases").value;
-        cacheData.expectedBehavior = document.getElementById("expectedBehavior").value;
-        cacheData.examples = document.getElementById("examples").value;
-      } else {
-        cacheData.vaguePrompt = document.getElementById("vaguePrompt").value;
-      }
-      localStorage.setItem("promptCache", JSON.stringify(cacheData));
-      // Ensure delete cache button is enabled after saving cache
-      document.getElementById("delete-cache-button").disabled = false;
-      // Ensure Load Cache button is enabled after saving cache
-      document.getElementById("loadCacheBtn").disabled = false;
-      // Show delete cache wrapper after saving cache
-      document.getElementById('delete-cache-wrapper').style.display = 'block';
-      // Call updateCacheButtons if available
-      if (window.updateCacheButtons) window.updateCacheButtons();
-      // --- End localStorage save ---
-  } catch (err) {
-      const markdownBox = document.getElementById("markdownBox");
-      markdownBox.innerHTML = "Error: " + err.message;
-      document.getElementById("runCodeBtn").style.display = "none";
-  }
-}
+        const markdownBox = document.getElementById("markdownBox");
+        let code = "";
+        const codeElem = markdownBox.querySelector("code");
+        if (codeElem) {
+          code = codeElem.textContent.trim();
+        }
 
-        // --- Pyodide Integration ---
-        let pyodideReady = false;
-        let pyodide = null;
+        const outputElement = document.getElementById("executionResult");
+        outputElement.innerText = "";
+        outputElement.style.display = "block";
 
-        async function executeGeneratedCode() {
-            if (!pyodideReady) {
-                alert("Python environment is still loading...");
-                return;
-            }
-
-            const markdownBox = document.getElementById("markdownBox");
-            let code = "";
-            const codeElem = markdownBox.querySelector("code");
-            if (codeElem) {
-                code = codeElem.textContent.trim();
-            }
-
-            const outputElement = document.getElementById("executionResult");
-            outputElement.innerText = "";
-            outputElement.style.display = "block";
-
-            try {
-                const wrappedCode = `
+        try {
+          const wrappedCode = `
 import sys
 import io
 stdout = sys.stdout
 sys.stdout = io.StringIO()
 try:
-${code.split('\n').map(line => '    ' + line).join('\n')}
+${code
+  .split("\n")
+  .map((line) => "    " + line)
+  .join("\n")}
     output = sys.stdout.getvalue()
 finally:
     sys.stdout = stdout
 output
                 `;
-                const result = await pyodide.runPythonAsync(wrappedCode);
-                outputElement.innerText = result.trim() || "(Code executed successfully, no output)";
-            } catch (err) {
-                outputElement.innerText = "Python Error:\n" + err;
-            }
+          const result = await pyodide.runPythonAsync(wrappedCode);
+          outputElement.innerText =
+            result.trim() || "(Code executed successfully, no output)";
+        } catch (err) {
+          outputElement.innerText = "Python Error:\n" + err;
         }
-
-        function populateFields(sample) {
-            if (sample === "sort") {
-                document.getElementById("vaguePrompt").value = "sort a list";
-                document.getElementById("functionName").value = "sort_list";
-                document.getElementById("arguments").value = "input_list: List[int]";
-                document.getElementById("returnType").value = "List[int]";
-                document.getElementById("constraints").value = "Do not use built-in sort() or sorted().\nThe solution should run in O(n log n) time.\nUse merge sort or quick sort algorithm.";
-                document.getElementById("edgeCases").value = "Handle an empty list\nHandle lists with duplicate values\nHandle lists with a single element";
-                document.getElementById("expectedBehavior").value = "Sort the input list in ascending order using a custom sorting algorithm and return the sorted list.\nDo not modify the input in place.";
-                document.getElementById("examples").value = "input: [3, 1, 2] → output: [1, 2, 3]\ninput: [] → output: []\ninput: [5, 5, 2] → output: [2, 5, 5]";
-            } else if (sample === "email") {
-                document.getElementById("vaguePrompt").value = "validate an email";
-                document.getElementById("functionName").value = "validate_email";
-                document.getElementById("arguments").value = "email: str";
-                document.getElementById("returnType").value = "bool";
-                document.getElementById("constraints").value = "Do not use regular expressions.";
-                document.getElementById("edgeCases").value = "Handle missing '@' or domain\nSupport empty string";
-                document.getElementById("expectedBehavior").value = "Return True if email format is valid, otherwise False.";
-                document.getElementById("examples").value = "input: 'abc@example.com' → output: True\ninput: 'abc@' → output: False\ninput: '' → output: False";
-            } else if (sample === "blank" || sample === "") {
-                document.getElementById("vaguePrompt").value = "";
-                document.getElementById("functionName").value = "";
-                document.getElementById("arguments").value = "";
-                document.getElementById("returnType").value = "";
-                document.getElementById("constraints").value = "";
-                document.getElementById("edgeCases").value = "";
-                document.getElementById("expectedBehavior").value = "";
-                document.getElementById("examples").value = "";
-            }
-            // Enable or disable the green arrow button depending on sample selection
-            document.getElementById("generateBtnTop").disabled = sample === "";
-            checkEnableButtons();
-        }
-
-        function detectSystemTheme() {
-            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const appDark = document.body.classList.contains("dark-mode");
-            // Removed theme notice display logic as theme notice is removed
-        }
-
-        // Update theme notice on toggle and sync checkbox state
-        function toggleDarkMode() {
-            const isDark = document.body.classList.toggle("dark-mode");
-            document.querySelector(".switch input").checked = isDark;
-            detectSystemTheme();
-            updateHighlightTheme();
-        }
-
-        // Highlight.js theme toggler for dark/light mode
-        function updateHighlightTheme() {
-            const isDark = document.body.classList.contains("dark-mode");
-            document.getElementById("hljs-light").disabled = isDark;
-            document.getElementById("hljs-dark").disabled = !isDark;
-        }
-
-        // Check system theme match on load, apply system theme and initialize checkbox
-        window.onload = () => {
-            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (prefersDark) {
-                document.body.classList.add("dark-mode");
-                document.querySelector(".switch input").checked = true;
-            } else {
-                document.body.classList.remove("dark-mode");
-                document.querySelector(".switch input").checked = false;
-            }
-            detectSystemTheme();
-            updateHighlightTheme();
-        };
-
-        function copyToClipboard(id) {
-            let el = document.getElementById(id);
-            let text = "";
-
-            if (id === "markdownBox") {
-                text = lastGeneratedCode.trim();
-            } else {
-                text = el.innerText.trim();
-            }
-
-            if (!text) return;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Copied to clipboard!");
-            });
-        }
-
-// Highlight.js: syntax highlight for static code blocks on initial load
-document.addEventListener("DOMContentLoaded", function () {
-    if (window.hljs) {
-        document.querySelectorAll('pre code').forEach(block => {
-            window.hljs.highlightElement(block);
-        });
-    }
-    // --- Enable/Disable Load Cache button and update class depending on cache presence ---
-    const loadCacheButton = document.getElementById("loadCacheBtn");
-    const hasCache = localStorage.getItem("promptCache") !== null;
-    loadCacheButton.disabled = !hasCache;
-    if (!hasCache) {
-      loadCacheButton.classList.add("disabled");
-      loadCacheButton.innerHTML = "<strong>No Cache</strong>";
-    } else {
-      loadCacheButton.classList.remove("disabled");
-      loadCacheButton.innerHTML = "<strong>Load Cache</strong>";
-    }
-});
-function enableMarkdownEdit() {
-    const codeElement = document.querySelector("#markdownBox .markdown-code code");
-    if (codeElement) {
-        codeElement.setAttribute("contenteditable", "true");
-        codeElement.focus();
-    }
-}
-</script>
-<script type="text/javascript">
-  async function loadPyodideAndInitialize() {
-    const pyodideScript = document.createElement("script");
-    pyodideScript.src = "https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js";
-    pyodideScript.onload = async () => {
-      if (typeof loadPyodide === "function") {
-        pyodide = await loadPyodide();
-        pyodideReady = true;
-      } else {
-        console.error("loadPyodide is not available.");
       }
-    };
-    document.body.appendChild(pyodideScript);
-  }
 
-  loadPyodideAndInitialize();
-</script>
-</body>
+      function populateFields(sample) {
+        if (sample === "sort") {
+          document.getElementById("vaguePrompt").value = "sort a list";
+          document.getElementById("functionName").value = "sort_list";
+          document.getElementById("arguments").value = "input_list: List[int]";
+          document.getElementById("returnType").value = "List[int]";
+          document.getElementById("constraints").value =
+            "Do not use built-in sort() or sorted().\nThe solution should run in O(n log n) time.\nUse merge sort or quick sort algorithm.";
+          document.getElementById("edgeCases").value =
+            "Handle an empty list\nHandle lists with duplicate values\nHandle lists with a single element";
+          document.getElementById("expectedBehavior").value =
+            "Sort the input list in ascending order using a custom sorting algorithm and return the sorted list.\nDo not modify the input in place.";
+          document.getElementById("examples").value =
+            "input: [3, 1, 2] → output: [1, 2, 3]\ninput: [] → output: []\ninput: [5, 5, 2] → output: [2, 5, 5]";
+        } else if (sample === "email") {
+          document.getElementById("vaguePrompt").value = "validate an email";
+          document.getElementById("functionName").value = "validate_email";
+          document.getElementById("arguments").value = "email: str";
+          document.getElementById("returnType").value = "bool";
+          document.getElementById("constraints").value =
+            "Do not use regular expressions.";
+          document.getElementById("edgeCases").value =
+            "Handle missing '@' or domain\nSupport empty string";
+          document.getElementById("expectedBehavior").value =
+            "Return True if email format is valid, otherwise False.";
+          document.getElementById("examples").value =
+            "input: 'abc@example.com' → output: True\ninput: 'abc@' → output: False\ninput: '' → output: False";
+        } else if (sample === "blank" || sample === "") {
+          document.getElementById("vaguePrompt").value = "";
+          document.getElementById("functionName").value = "";
+          document.getElementById("arguments").value = "";
+          document.getElementById("returnType").value = "";
+          document.getElementById("constraints").value = "";
+          document.getElementById("edgeCases").value = "";
+          document.getElementById("expectedBehavior").value = "";
+          document.getElementById("examples").value = "";
+        }
+        // Enable or disable the green arrow button depending on sample selection
+        document.getElementById("generateBtnTop").disabled = sample === "";
+        checkEnableButtons();
+      }
+
+      function detectSystemTheme() {
+        const prefersDark =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const appDark = document.body.classList.contains("dark-mode");
+        // Removed theme notice display logic as theme notice is removed
+      }
+
+      // Update theme notice on toggle and sync checkbox state
+      function toggleDarkMode() {
+        const isDark = document.body.classList.toggle("dark-mode");
+        document.querySelector(".switch input").checked = isDark;
+        detectSystemTheme();
+        updateHighlightTheme();
+      }
+
+      // Highlight.js theme toggler for dark/light mode
+      function updateHighlightTheme() {
+        const isDark = document.body.classList.contains("dark-mode");
+        document.getElementById("hljs-light").disabled = isDark;
+        document.getElementById("hljs-dark").disabled = !isDark;
+      }
+
+      // Check system theme match on load, apply system theme and initialize checkbox
+      window.onload = () => {
+        const prefersDark =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (prefersDark) {
+          document.body.classList.add("dark-mode");
+          document.querySelector(".switch input").checked = true;
+        } else {
+          document.body.classList.remove("dark-mode");
+          document.querySelector(".switch input").checked = false;
+        }
+        detectSystemTheme();
+        updateHighlightTheme();
+      };
+
+      function copyToClipboard(id) {
+        let el = document.getElementById(id);
+        let text = "";
+
+        if (id === "markdownBox") {
+          text = lastGeneratedCode.trim();
+        } else {
+          text = el.innerText.trim();
+        }
+
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(() => {
+          alert("Copied to clipboard!");
+        });
+      }
+
+      // Highlight.js: syntax highlight for static code blocks on initial load
+      document.addEventListener("DOMContentLoaded", function () {
+        if (window.hljs) {
+          document.querySelectorAll("pre code").forEach((block) => {
+            window.hljs.highlightElement(block);
+          });
+        }
+        // --- Enable/Disable Load Cache button and update class depending on cache presence ---
+        const loadCacheButton = document.getElementById("loadCacheBtn");
+        const hasCache = localStorage.getItem("promptCache") !== null;
+        loadCacheButton.disabled = !hasCache;
+        if (!hasCache) {
+          loadCacheButton.classList.add("disabled");
+          loadCacheButton.innerHTML = "<strong>No Cache</strong>";
+        } else {
+          loadCacheButton.classList.remove("disabled");
+          loadCacheButton.innerHTML = "<strong>Load Cache</strong>";
+        }
+      });
+      function enableMarkdownEdit() {
+        const codeElement = document.querySelector(
+          "#markdownBox .markdown-code code"
+        );
+        if (codeElement) {
+          codeElement.setAttribute("contenteditable", "true");
+          codeElement.focus();
+        }
+      }
+    </script>
+    <script type="text/javascript">
+      async function loadPyodideAndInitialize() {
+        const pyodideScript = document.createElement("script");
+        pyodideScript.src =
+          "https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js";
+        pyodideScript.onload = async () => {
+          if (typeof loadPyodide === "function") {
+            pyodide = await loadPyodide();
+            pyodideReady = true;
+          } else {
+            console.error("loadPyodide is not available.");
+          }
+        };
+        document.body.appendChild(pyodideScript);
+      }
+
+      loadPyodideAndInitialize();
+    </script>
+  </body>
 </html>
 <script>
-// --- Load Cache Button & Handler ---
-document.addEventListener("DOMContentLoaded", function () {
-  // On load, update delete-cache-button enabled state based on cache presence
-  const deleteCacheButton = document.getElementById('delete-cache-button');
-  function updateDeleteCacheButtonState() {
-    const cachedData = localStorage.getItem("promptCache");
-    if (cachedData) {
-      deleteCacheButton.disabled = false;
-      document.getElementById('delete-cache-wrapper').style.display = 'block';
-    } else {
-      deleteCacheButton.disabled = true;
-      document.getElementById('delete-cache-wrapper').style.display = 'none';
-    }
-  }
-  updateDeleteCacheButtonState();
-
-  document.getElementById("loadCacheBtn").addEventListener("click", () => {
-    const cached = localStorage.getItem("promptCache");
-    if (cached) {
-      const data = JSON.parse(cached);
-      // Set sample
-      if (data.sample !== undefined) {
-        document.getElementById("sampleSelect").value = data.sample;
-      }
-      // Set model
-      if (data.model) {
-        document.getElementById("modelSelect").value = data.model;
-      }
-      // Set mode
-      if (data.mode === "structured") {
-        document.getElementById("structuredMode").checked = true;
-        document.getElementById("vaguePromptContainer").style.display = "none";
-        document.querySelectorAll('.structured-section').forEach(section => {
-          section.style.display = 'block';
-        });
-        document.getElementById("functionName").value = data.functionName || "";
-        document.getElementById("arguments").value = data.arguments || "";
-        document.getElementById("returnType").value = data.returnType || "";
-        document.getElementById("constraints").value = data.constraints || "";
-        document.getElementById("edgeCases").value = data.edgeCases || "";
-        document.getElementById("expectedBehavior").value = data.expectedBehavior || "";
-        document.getElementById("examples").value = data.examples || "";
-        document.getElementById("vaguePrompt").value = "";
+  // --- Load Cache Button & Handler ---
+  document.addEventListener("DOMContentLoaded", function () {
+    // On load, update delete-cache-button enabled state based on cache presence
+    const deleteCacheButton = document.getElementById("delete-cache-button");
+    function updateDeleteCacheButtonState() {
+      const cachedData = localStorage.getItem("promptCache");
+      if (cachedData) {
+        deleteCacheButton.disabled = false;
+        document.getElementById("delete-cache-wrapper").style.display = "block";
       } else {
-        document.getElementById("vagueMode").checked = true;
-        document.getElementById("vaguePromptContainer").style.display = "block";
-        document.querySelectorAll('.structured-section').forEach(section => {
-          section.style.display = 'none';
-        });
-        document.getElementById("vaguePrompt").value = data.vaguePrompt || "";
-        document.getElementById("functionName").value = "";
-        document.getElementById("arguments").value = "";
-        document.getElementById("returnType").value = "";
-        document.getElementById("constraints").value = "";
-        document.getElementById("edgeCases").value = "";
-        document.getElementById("expectedBehavior").value = "";
-        document.getElementById("examples").value = "";
+        deleteCacheButton.disabled = true;
+        document.getElementById("delete-cache-wrapper").style.display = "none";
       }
-      // Set refined prompt output
-      document.getElementById("refinedOutput").innerText = data.refinedPrompt || "";
-      // Set recommendations
-      document.getElementById("recommendationsBox").innerHTML = simpleMarkdownToHTML(data.recommendations || "");
-      // Set code output (markdown)
-      const language = document.getElementById("languageSelect").value;
-      const langClass = document.getElementById("languageSelect").selectedOptions[0].dataset.highlight || "plaintext";
-      let code = "";
-      if (data.output) {
-        let codeBlocks = [...data.output.matchAll(/```(\w+)\s*([\s\S]*?)\s*```/g)];
-        if (codeBlocks.length > 0) {
-          code = codeBlocks
-            .map(match =>
-              match[2]
-                .split('\n')
-                .filter(line => line.trim() !== '')
-                .join('\n')
-                .trim()
-            )
-            .join("\n\n")
-            .trim();
+    }
+    updateDeleteCacheButtonState();
+
+    document.getElementById("loadCacheBtn").addEventListener("click", () => {
+      const cached = localStorage.getItem("promptCache");
+      if (cached) {
+        const data = JSON.parse(cached);
+        // Set sample
+        if (data.sample !== undefined) {
+          document.getElementById("sampleSelect").value = data.sample;
         }
-      }
-      lastGeneratedCode = code;
-      const markdownBox = document.getElementById("markdownBox");
-      markdownBox.innerHTML = code
-        ? `<div class="markdown-preview">
+        // Set model
+        if (data.model) {
+          document.getElementById("modelSelect").value = data.model;
+        }
+        // Set mode
+        if (data.mode === "structured") {
+          document.getElementById("structuredMode").checked = true;
+          document.getElementById("vaguePromptContainer").style.display =
+            "none";
+          document
+            .querySelectorAll(".structured-section")
+            .forEach((section) => {
+              section.style.display = "block";
+            });
+          document.getElementById("functionName").value =
+            data.functionName || "";
+          document.getElementById("arguments").value = data.arguments || "";
+          document.getElementById("returnType").value = data.returnType || "";
+          document.getElementById("constraints").value = data.constraints || "";
+          document.getElementById("edgeCases").value = data.edgeCases || "";
+          document.getElementById("expectedBehavior").value =
+            data.expectedBehavior || "";
+          document.getElementById("examples").value = data.examples || "";
+          document.getElementById("vaguePrompt").value = "";
+        } else {
+          document.getElementById("vagueMode").checked = true;
+          document.getElementById("vaguePromptContainer").style.display =
+            "block";
+          document
+            .querySelectorAll(".structured-section")
+            .forEach((section) => {
+              section.style.display = "none";
+            });
+          document.getElementById("vaguePrompt").value = data.vaguePrompt || "";
+          document.getElementById("functionName").value = "";
+          document.getElementById("arguments").value = "";
+          document.getElementById("returnType").value = "";
+          document.getElementById("constraints").value = "";
+          document.getElementById("edgeCases").value = "";
+          document.getElementById("expectedBehavior").value = "";
+          document.getElementById("examples").value = "";
+        }
+        // Set refined prompt output
+        document.getElementById("refinedOutput").innerText =
+          data.refinedPrompt || "";
+        // Set recommendations
+        document.getElementById("recommendationsBox").innerHTML =
+          simpleMarkdownToHTML(data.recommendations || "");
+        // Set code output (markdown)
+        const language = document.getElementById("languageSelect").value;
+        const langClass =
+          document.getElementById("languageSelect").selectedOptions[0].dataset
+            .highlight || "plaintext";
+        let code = "";
+        if (data.output) {
+          let codeBlocks = [
+            ...data.output.matchAll(/```(\w+)\s*([\s\S]*?)\s*```/g),
+          ];
+          if (codeBlocks.length > 0) {
+            code = codeBlocks
+              .map((match) =>
+                match[2]
+                  .split("\n")
+                  .filter((line) => line.trim() !== "")
+                  .join("\n")
+                  .trim()
+              )
+              .join("\n\n")
+              .trim();
+          }
+        }
+        lastGeneratedCode = code;
+        const markdownBox = document.getElementById("markdownBox");
+        markdownBox.innerHTML = code
+          ? `<div class="markdown-preview">
           <div class="markdown-header">${language.toLowerCase()}</div>
           <pre class="markdown-code line-numbers"><code class="${langClass}">${code}</code></pre>
         </div>`
-        : "No code block detected.";
-      if (window.hljs) {
-        const codeBlocks = markdownBox.querySelectorAll("pre code");
-        codeBlocks.forEach(block => {
-          window.hljs.highlightElement(block);
-        });
+          : "No code block detected.";
+        if (window.hljs) {
+          const codeBlocks = markdownBox.querySelectorAll("pre code");
+          codeBlocks.forEach((block) => {
+            window.hljs.highlightElement(block);
+          });
+        }
+        // Enable/disable copy buttons
+        document.querySelector(
+          '.copy-button[onclick*="refinedOutput"]'
+        ).disabled = !(data.refinedPrompt && data.refinedPrompt.trim());
+        document.querySelector(
+          '.copy-button[onclick*="recommendationsBox"]'
+        ).disabled = !(data.recommendations && data.recommendations.trim());
+        document.querySelector(
+          '.copy-button[onclick*="markdownBox"]'
+        ).disabled = !code;
+        // Show containers
+        document.getElementById("recommendationsContainer").style.display =
+          "block";
+        document.getElementById("markdownContainer").style.display = "block";
+        // Show Run Code button if code is present
+        document.getElementById("runCodeBtn").style.display = code
+          ? "inline-block"
+          : "none";
+        // Update mode toggle UI
+        if (typeof updateModeToggle === "function") updateModeToggle();
+        checkEnableButtons();
+        // After loading cache, ensure delete button enabled
+        updateDeleteCacheButtonState();
+        // Show delete cache wrapper after loading cache
+        document.getElementById("delete-cache-wrapper").style.display = "block";
       }
-      // Enable/disable copy buttons
-      document.querySelector('.copy-button[onclick*="refinedOutput"]').disabled = !(data.refinedPrompt && data.refinedPrompt.trim());
-      document.querySelector('.copy-button[onclick*="recommendationsBox"]').disabled = !(data.recommendations && data.recommendations.trim());
-      document.querySelector('.copy-button[onclick*="markdownBox"]').disabled = !code;
-      // Show containers
-      document.getElementById("recommendationsContainer").style.display = "block";
-      document.getElementById("markdownContainer").style.display = "block";
-      // Show Run Code button if code is present
-      document.getElementById("runCodeBtn").style.display = code ? "inline-block" : "none";
-      // Update mode toggle UI
-      if (typeof updateModeToggle === "function") updateModeToggle();
-      checkEnableButtons();
-      // After loading cache, ensure delete button enabled
-      updateDeleteCacheButtonState();
-      // Show delete cache wrapper after loading cache
-      document.getElementById('delete-cache-wrapper').style.display = 'block';
-    }
-  });
+    });
 
-  // Attach to window so other scripts can call
-  window.updateDeleteCacheButtonState = updateDeleteCacheButtonState;
-});
+    // Attach to window so other scripts can call
+    window.updateDeleteCacheButtonState = updateDeleteCacheButtonState;
+  });
 </script>
 <script>
-// --- Delete Cache Button & Handler ---
-document.addEventListener("DOMContentLoaded", function () {
-  const deleteCacheButton = document.getElementById('delete-cache-button');
-  deleteCacheButton.addEventListener('click', () => {
-    localStorage.removeItem('promptCache');
-    // After removal, disable the button
-    document.getElementById("delete-cache-button").disabled = true;
-    // Also disable Load Cache button
-    document.getElementById("loadCacheBtn").disabled = true;
-    // Hide delete cache wrapper
-    document.getElementById('delete-cache-wrapper').style.display = 'none';
-    alert('Cache cleared!');
+  // --- Delete Cache Button & Handler ---
+  document.addEventListener("DOMContentLoaded", function () {
+    const deleteCacheButton = document.getElementById("delete-cache-button");
+    deleteCacheButton.addEventListener("click", () => {
+      localStorage.removeItem("promptCache");
+      // After removal, disable the button
+      document.getElementById("delete-cache-button").disabled = true;
+      // Also disable Load Cache button
+      document.getElementById("loadCacheBtn").disabled = true;
+      // Hide delete cache wrapper
+      document.getElementById("delete-cache-wrapper").style.display = "none";
+      alert("Cache cleared!");
+    });
   });
-});
 
-// On page load and after cache changes, update delete-cache-button state
-document.addEventListener("DOMContentLoaded", function () {
-  if (typeof window.updateDeleteCacheButtonState === "function") {
-    window.updateDeleteCacheButtonState();
-  }
-});
+  // On page load and after cache changes, update delete-cache-button state
+  document.addEventListener("DOMContentLoaded", function () {
+    if (typeof window.updateDeleteCacheButtonState === "function") {
+      window.updateDeleteCacheButtonState();
+    }
+  });
 </script>

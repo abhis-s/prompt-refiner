@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cors()); // enable requests from your frontend
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 app.post("/generate-code", async (req, res) => {
@@ -21,20 +21,22 @@ app.post("/generate-code", async (req, res) => {
 
   try {
     const modeVal = mode || "structured";
-    const systemPrompt = `${basePrompt}\n${modeVal === "structured" ? structuredPrompt : vaguePrompt}`;
+    const systemPrompt = `${basePrompt}\n${
+      modeVal === "structured" ? structuredPrompt : vaguePrompt
+    }`;
     const completion = await openai.chat.completions.create({
       model: model || "gpt-4o",
       messages: [
         {
           role: "system",
-          content: systemPrompt
+          content: systemPrompt,
         },
         {
           role: "user",
-          content: prompt
-        }
+          content: prompt,
+        },
       ],
-      temperature: 0.2
+      temperature: 0.2,
     });
 
     const code = completion.choices[0].message.content.trim();
