@@ -3,7 +3,7 @@
   margin-left: 12px;
   padding: 6px 14px;
   height: 34px;
-  background-color: var(--primary-color, #ed8079);
+  background-color: var(--primary-color, #bea533);
   border: none;
   border-radius: 20px;
   color: white;
@@ -722,4 +722,41 @@ body.dark-mode #markdownContainer > div:first-child {
     display: flex;
     align-items: center;
     height: 100%;
+}
+
+.red-button {
+  background-color: #ed8079;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease-in-out;
+  margin-left: 10px;
+}
+
+.red-button:hover {
+  background-color: #ffcdd2;
+}
+
+.red-button:disabled svg {
+  fill: grey
+}
+
+/* Dark mode compatibility for .red-button */
+[data-theme="dark"] .red-button,
+body.dark-mode .red-button {
+  background-color: #ff8a80 !important; /* Light red background */
+  color: #b71c1c !important;            /* Dark red icon/text */
+  border-color: #ff8a80 !important;
+}
+
+
+.nav-button.red-button:disabled {
+  background-color: #aaa !important;
+  color: #555 !important;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
