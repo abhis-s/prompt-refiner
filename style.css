@@ -1,3 +1,28 @@
+/* Navigation Bar Shadow & Sticky */
+/* Nav bar full width and edge-to-edge */
+.nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: var(--bg-color, #f0f2f5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  left: 0;
+  right: 0;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+body.dark-mode .nav-bar {
+  background-color: #121212;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  left: 0;
+  right: 0;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
 /* Modern nav bar button for Load Cache */
 #loadCacheBtn.modern-button {
   margin-left: 12px;
@@ -312,12 +337,13 @@ body.dark-mode input:checked + .slider {
   align-items: center;
   justify-content: space-between;
   flex-wrap: nowrap;
-  position: sticky;
-  top: 0;
-  background-color: #f0f2f5;
-  z-index: 1000;
   border-bottom: 1px solid #ccc;
   height: 70px;
+  width: 100%;
+  margin: 0;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  max-width: none;
 }
 .header-container h1 {
   margin: 0;
@@ -330,8 +356,21 @@ body.dark-mode input:checked + .slider {
 }
 
 body.dark-mode .header-container {
-  background-color: #121212;
+  background-color: transparent;
   border-bottom: 1px solid #333;
+  width: 100%;
+  margin: 0;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  max-width: none;
+}
+/* Ensure nav is always full width and has no max-width */
+nav {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  max-width: none !important;
+  box-sizing: border-box;
 }
 
 /* Copy button styling */

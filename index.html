@@ -113,102 +113,118 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
   </head>
   <body>
-    <div class="header-container">
-      <div class="header-title-row" style="display: flex; align-items: center">
-        <h1>Prompt Refinement App</h1>
+    <nav
+      class="nav-bar"
+      style="
+        width: auto;
+        margin-left: -40px;
+        margin-right: -40px;
+        padding-left: 20px;
+        padding-right: 20px;
+      "
+    >
+      <div class="header-container">
         <div
-          id="mode-toggle-pill-header"
-          class="mode-toggle-pill"
-          style="margin-left: 24px"
+          class="header-title-row"
+          style="display: flex; align-items: center"
         >
-          <input type="radio" id="vagueMode" name="mode" value="vague" />
-          <label for="vagueMode" style="width: 70px">Vague</label>
-          <input
-            type="radio"
-            id="structuredMode"
-            name="mode"
-            value="structured"
-            checked
-          />
-          <label for="structuredMode" style="width: 100px">Structured</label>
-          <span class="pill-slider"></span>
-        </div>
-        <button id="loadCacheBtn" class="modern-button">
-          <strong>Load Cache</strong>
-        </button>
-        <div id="delete-cache-wrapper" style="display: none">
-          <button
-            id="delete-cache-button"
-            class="nav-button red-button"
-            disabled
-            title="Delete cached data"
+          <h1>Prompt Refinement App</h1>
+          <div
+            id="mode-toggle-pill-header"
+            class="mode-toggle-pill"
+            style="margin-left: 24px"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="20px"
-              viewBox="0 -960 960 960"
-              width="20px"
-              fill="#e3e3e3"
-            >
-              <path
-                d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"
-              />
-            </svg>
+            <input type="radio" id="vagueMode" name="mode" value="vague" />
+            <label for="vagueMode" style="width: 70px">Vague</label>
+            <input
+              type="radio"
+              id="structuredMode"
+              name="mode"
+              value="structured"
+              checked
+            />
+            <label for="structuredMode" style="width: 100px">Structured</label>
+            <span class="pill-slider"></span>
+          </div>
+          <button id="loadCacheBtn" class="modern-button">
+            <strong>Load Cache</strong>
           </button>
-        </div>
-        <script>
-          document.addEventListener("DOMContentLoaded", () => {
-            function updateCacheButtons() {
-              const loadBtn = document.getElementById("loadCacheBtn");
-              const deleteWrapper = document.getElementById(
-                "delete-cache-wrapper"
-              );
-              const deleteBtn = document.getElementById("delete-cache-button");
-              // Use promptCache for cache presence check
-              const cachedData = localStorage.getItem("promptCache");
+          <div id="delete-cache-wrapper" style="display: none">
+            <button
+              id="delete-cache-button"
+              class="nav-button red-button"
+              disabled
+              title="Delete cached data"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="20px"
+                viewBox="0 -960 960 960"
+                width="20px"
+                fill="#e3e3e3"
+              >
+                <path
+                  d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"
+                />
+              </svg>
+            </button>
+          </div>
+          <script>
+            document.addEventListener("DOMContentLoaded", () => {
+              function updateCacheButtons() {
+                const loadBtn = document.getElementById("loadCacheBtn");
+                const deleteWrapper = document.getElementById(
+                  "delete-cache-wrapper"
+                );
+                const deleteBtn = document.getElementById(
+                  "delete-cache-button"
+                );
+                // Use promptCache for cache presence check
+                const cachedData = localStorage.getItem("promptCache");
 
-              if (!cachedData) {
-                loadBtn.disabled = true;
-                loadBtn.classList.add("disabled");
-                loadBtn.innerHTML = "<strong>No Cache</strong>";
-                deleteWrapper.style.display = "none";
-              } else {
-                loadBtn.disabled = false;
-                loadBtn.classList.remove("disabled");
-                loadBtn.innerHTML = "<strong>Load Cache</strong>";
-                deleteWrapper.style.display = "inline-block";
-                deleteBtn.disabled = false;
+                if (!cachedData) {
+                  loadBtn.disabled = true;
+                  loadBtn.classList.add("disabled");
+                  loadBtn.innerHTML = "<strong>No Cache</strong>";
+                  deleteWrapper.style.display = "none";
+                } else {
+                  loadBtn.disabled = false;
+                  loadBtn.classList.remove("disabled");
+                  loadBtn.innerHTML = "<strong>Load Cache</strong>";
+                  deleteWrapper.style.display = "inline-block";
+                  deleteBtn.disabled = false;
+                }
               }
-            }
 
-            // Call on load
-            updateCacheButtons();
+              // Call on load
+              updateCacheButtons();
 
-            // Hook into delete cache button
-            document
-              .getElementById("delete-cache-button")
-              .addEventListener("click", () => {
-                localStorage.removeItem("promptCache");
-                updateCacheButtons();
-              });
+              // Hook into delete cache button
+              document
+                .getElementById("delete-cache-button")
+                .addEventListener("click", () => {
+                  localStorage.removeItem("promptCache");
+                  updateCacheButtons();
+                });
 
-            // Call this after saving to cache elsewhere in the code:
-            window.updateCacheButtons = updateCacheButtons;
-          });
-        </script>
-      </div>
-      <div class="toggle-container">
-        <div class="toggle-row">
-          <label class="switch">
-            <input type="checkbox" onclick="toggleDarkMode()" />
-            <span class="slider">
-              <span class="icon-left">☀️</span>
-              <span class="icon-right">🌙</span>
-            </span>
-          </label>
+              // Call this after saving to cache elsewhere in the code:
+              window.updateCacheButtons = updateCacheButtons;
+            });
+          </script>
+        </div>
+        <div class="toggle-container">
+          <div class="toggle-row">
+            <label class="switch">
+              <input type="checkbox" onclick="toggleDarkMode()" />
+              <span class="slider">
+                <span class="icon-left">☀️</span>
+                <span class="icon-right">🌙</span>
+              </span>
+            </label>
+          </div>
         </div>
       </div>
-    </div>
+    </nav>
 
     <div class="container">
       <div class="left-column">
@@ -357,20 +373,22 @@
         </button>
       </div>
       <div class="right-column">
-        <div id="refinedPromptContainer" style="margin-top: 25px">
-          <div>
-            <label style="cursor: pointer" onclick="toggleRefinedPrompt()"
-              >Generated Refined Prompt ▼</label
-            >
-            <button
-              class="copy-button"
-              onclick="copyToClipboard('refinedOutput')"
-              disabled
-            >
-              Copy
-            </button>
+        <div id="output-container">
+          <div id="refinedPromptContainer" style="margin-top: 25px">
+            <div>
+              <label style="cursor: pointer" onclick="toggleRefinedPrompt()"
+                >Generated Refined Prompt ▼</label
+              >
+              <button
+                class="copy-button"
+                onclick="copyToClipboard('refinedOutput')"
+                disabled
+              >
+                Copy
+              </button>
+            </div>
+            <div class="output" id="refinedOutput"></div>
           </div>
-          <div class="output" id="refinedOutput"></div>
         </div>
         <div
           id="recommendationsContainer"
@@ -603,6 +621,10 @@ ${vaguePrompt}`;
         }
 
         document.getElementById("refinedOutput").innerText = result;
+        const outputContainer = document.getElementById("output-container");
+        if (outputContainer) {
+          outputContainer.scrollIntoView({ behavior: "smooth" });
+        }
         document.querySelector(
           '.copy-button[onclick*="refinedOutput"]'
         ).disabled = !result.trim();
